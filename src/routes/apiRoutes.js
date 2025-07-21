@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const apiController = require('../controllers/apiController');
 
-// Route pour l'inscription
-router.post('/', apiController.register);
+// Define your API routes here
 
 module.exports = router;
