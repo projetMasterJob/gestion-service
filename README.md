@@ -20,7 +20,7 @@ API REST sécurisée pour la gestion des utilisateurs de l'application JobExplor
 
 1. **Cloner le repository**
    ```bash
-   git clone <url-du-repo>
+   git clone https://github.com/projetMasterJob/jobazur-api.git
    cd jobazur-api
    ```
 
@@ -44,12 +44,7 @@ API REST sécurisée pour la gestion des utilisateurs de l'application JobExplor
    # Configuration du serveur
    PORT=5000
    ```
-
-4. **Créer la base de données PostgreSQL**
-   ```sql
-   CREATE DATABASE jobazur;
-   ```
-
+   
 ## Lancement du projet
 
 ### Mode développement
