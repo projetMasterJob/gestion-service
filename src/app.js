@@ -13,4 +13,9 @@ const userRoutes = require('./routes/userRoutes');
 // Routes principales
 app.use('/api', userRoutes);
 
+// Route racine
+app.get('/', (req, res) => {
+  res.json({ message: 'microservice utilisateurs' });
+});
+
 module.exports = app;
