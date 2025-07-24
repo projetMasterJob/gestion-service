@@ -3,12 +3,14 @@ require('dotenv').config();
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const apiRoutes = require('./routes/apiRoutes');
+// Routes
+const userRoutes = require('./routes/userRoutes');
 
 // Routes principales
-app.use('/api', apiRoutes);
+app.use('/api', userRoutes);
 
 module.exports = app;
