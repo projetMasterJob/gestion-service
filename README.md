@@ -1,6 +1,6 @@
 # JobAzur API
 
-API REST sécurisée pour la gestion des utilisateurs de l'application JobExplorer. Cette API fournit des endpoints pour la gestion des profils utilisateurs avec authentification JWT.
+API REST sécurisée pour la gestion des utilisateurs de l'application JobAzur. Cette API fournit des endpoints pour la gestion des profils utilisateurs avec authentification JWT.
 
 ## Fonctionnalités
 
