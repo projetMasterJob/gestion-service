@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  gestion-service:
+    build: .
+    container_name: gestion-service
+    ports:
+      - "5001:5000"
+    env_file:
+      - .env
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
