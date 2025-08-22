@@ -16,8 +16,10 @@ exports.getApplicationsByUserId = async (userId) => {
 };
 
 // Create a new job
-exports.createJob = async (userId, jobData) => {
-  const company = await companyModel.getIdCompany(userId);
-  jobData.company_id = company.id;
+exports.createJob = async (jobData) => {
   return await companyModel.createJob(jobData);
+};
+
+exports.updateApplication = async (applicationId, updatedData) => {
+  return await companyModel.updateApplication(applicationId, updatedData);
 };

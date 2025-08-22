@@ -9,6 +9,8 @@ router.get('/:user_id/jobs', companyController.getJobsByUserId);
 
 router.get('/:user_id/applications', companyController.getApplicationsByUserId);
 
-router.post('/:user_id/job', middleware.authenticateToken, companyController.createJob);
+router.post('/job', middleware.authenticateToken, companyController.createJob);
+
+router.put('/application/:id', middleware.authenticateToken, companyController.updateApplication);
 
 module.exports = router;
