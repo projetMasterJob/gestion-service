@@ -1,66 +1,63 @@
 const companyService = require('../services/companyService');
 
-// Get a company by user ID
+// Récupère les informations de l'entreprise par ID utilisateur
 exports.getCompanyById = async (req, res) => {
-  console.log('Fetching company for user ID:', req.params.user_id);
   const { user_id } = req.params;
   try {
-    const company = await companyService.getCompanyById(user_id);
-    if (!company) {
-      return res.status(404).json({ message: 'Company not found' });
-    }
-    res.status(200).json(company);
+    const data = await companyService.getCompanyById(user_id);
+    return res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching company:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    // Si le service a posé error.status, on l'utilise. Sinon 500 (comme ton style "register").
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
 
+// Récupère les offres d'emploi de la compagnie par ID utilisateur
 exports.getJobsByUserId = async (req, res) => {
   const { user_id } = req.params;
   try {
-    const jobs = await companyService.getJobsByUserId(user_id);
-    res.status(200).json(jobs);
+    const data = await companyService.getJobsByUserId(user_id);
+    return res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching jobs:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
 
+// Récupère les candidatures de la compagnie par ID utilisateur
 exports.getApplicationsByUserId = async (req, res) => {
   const { user_id } = req.params;
   try {
-    const applications = await companyService.getApplicationsByUserId(user_id);
-    res.status(200).json(applications);
+    const data = await companyService.getApplicationsByUserId(user_id);
+    return res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching applications:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
 
+// Création d'une offre d'emploi
 exports.createJob = async (req, res) => {
   const jobData = req.body;
   try {
-    const newJob = await companyService.createJob(jobData);
-    res.status(201).json({ message: 'Job created successfully', job: newJob });
+    const job = await companyService.createJob(jobData);
+    return res.status(201).json({ message: 'Job created successfully', job });
   } catch (error) {
-    console.error('Error creating job:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
 
+// Mise à jour du status d'une candidature
 exports.updateApplication = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
-  console.log('Updating application:', id, updatedData);
   try {
-    const updatedApplication = await companyService.updateApplication(id, updatedData);
-    if (!updatedApplication) {
-      return res.status(404).json({ message: 'Application not found' });
-    }
-    res.status(200).json({ message: 'Application updated successfully', application: updatedApplication });
+    const app = await companyService.updateApplication(id, updatedData);
+    return res.status(200).json({ message: 'Application updated successfully', application: app });
   } catch (error) {
-    console.error('Error updating application:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
