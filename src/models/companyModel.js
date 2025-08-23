@@ -3,7 +3,7 @@ const pool = require('../config/dbConfig');
 
 //Get Company by company ID
 exports.getInfCompanyByID = async (id) => {
-  const query = `SELECT * FROM companies WHERE company_id = $1`;
+  const query = `SELECT * FROM companies WHERE id = $1`;
   const result = await pool.query(query, [id]);
   return result.rows[0];
 }
