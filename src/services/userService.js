@@ -77,6 +77,15 @@ class UserService {
       throw error;
     }
   }
+
+  static async createApplication(applicationData) {
+    try {
+      const newApplication = await UserModel.createApplication(applicationData);
+      return newApplication;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = UserService; 

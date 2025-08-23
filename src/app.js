@@ -9,9 +9,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
+const companyRoutes = require('./routes/companyRoutes');
 
 // Routes principales
 app.use('/api', userRoutes);
+app.use('/api/companies', companyRoutes);
 
 // Route racine
 app.get('/', (req, res) => {

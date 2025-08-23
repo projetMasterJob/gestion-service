@@ -61,6 +61,15 @@ class UserController {
     }
   }
 
+  static async createApplication(req, res) {
+    try {
+      const applicationData = req.body;
+      const newApplication = await UserService.createApplication(applicationData);
+      res.status(201).json(newApplication);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 
 }
 
