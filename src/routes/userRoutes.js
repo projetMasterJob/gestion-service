@@ -12,4 +12,4 @@ router.delete('/users/:id', authenticateToken, authorizeUser, UserController.del
 
 router.post('/users/application', authenticateToken, UserController.createApplication);
 
-module.exports = router; 
+module.exports = router;
