@@ -3,6 +3,7 @@ const service = require('../../src/services/companyService');
 
 // On mocke le model pour contrôler les retours DB
 jest.mock('../../src/models/companyModel', () => ({
+  getInfCompanyByID: jest.fn(),
   getById: jest.fn(),
   getJobsByUserId: jest.fn(),
   getApplicationsByUserId: jest.fn(),
@@ -26,6 +27,29 @@ describe('companyService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
+  // ------------------- getINFCompanyById -------------------
+describe('getINFCompanyById', () => {
+  it('jette 400 si companyId manquant', async () => {
+    await expectToThrowWithStatus(() => service.getINFCompanyById(''), 400, '"companyId" est requis');
+    expect(model.getInfCompanyByID).not.toHaveBeenCalled();
+  });
+
+  it('jette 404 si company introuvable', async () => {
+    model.getInfCompanyByID.mockResolvedValueOnce(null);
+    await expectToThrowWithStatus(() => service.getINFCompanyById('c-1'), 404, 'Entreprise introuvable');
+    expect(model.getInfCompanyByID).toHaveBeenCalledWith('c-1');
+  });
+
+  it('retourne la company si trouvée', async () => {
+    const fake = { id: 'c-1', name: 'Acme' };
+    model.getInfCompanyByID.mockResolvedValueOnce(fake);
+    const res = await service.getINFCompanyById('c-1');
+    expect(res).toEqual(fake);
+    expect(model.getInfCompanyByID).toHaveBeenCalledWith('c-1');
+  });
+});
+
 
   // ------------------- getCompanyById -------------------
   describe('getCompanyById', () => {

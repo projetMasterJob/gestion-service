@@ -16,6 +16,60 @@ describe('CompanyController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  // ========== getINFCompanyById ==========
+describe('getINFCompanyById', () => {
+  it('200: retourne la company et appelle le service avec company_id', async () => {
+    const req = { params: { company_id: 'c-123' } };
+    const res = mockRes();
+    const fake = { id: 'c-123', name: 'Acme' };
+
+    companyService.getINFCompanyById.mockResolvedValueOnce(fake);
+
+    await companyController.getINFCompanyById(req, res);
+
+    expect(companyService.getINFCompanyById).toHaveBeenCalledWith('c-123');
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(fake);
+  });
+
+  it('404: mappe error.status quand fourni par le service', async () => {
+    const req = { params: { company_id: 'unknown' } };
+    const res = mockRes();
+    const err = new Error('Entreprise introuvable');
+    err.status = 404;
+    companyService.getINFCompanyById.mockRejectedValueOnce(err);
+
+    await companyController.getINFCompanyById(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Entreprise introuvable' });
+  });
+
+  it('400: si erreur sans status mais avec message', async () => {
+    const req = { params: { company_id: '' } };
+    const res = mockRes();
+    const err = new Error('"companyId" est requis');
+    companyService.getINFCompanyById.mockRejectedValueOnce(err);
+
+    await companyController.getINFCompanyById(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: '"companyId" est requis' });
+  });
+
+  it('500: si erreur sans status et sans message', async () => {
+    const req = { params: { company_id: 'x' } };
+    const res = mockRes();
+    const err = new Error(); err.message = '';
+    companyService.getINFCompanyById.mockRejectedValueOnce(err);
+
+    await companyController.getINFCompanyById(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Internal server error' });
+  });
+});
+
 
   // ========== getCompanyById ==========
   describe('getCompanyById', () => {

@@ -1,5 +1,23 @@
 const companyModel = require('../models/companyModel');
 
+// Récupère les informations de l'entreprise par ID company
+exports.getINFCompanyById = async (companyId) => {
+  if (!companyId) {
+    const err = new Error('"companyId" est requis');
+    err.status = 400; throw err;
+  }
+
+  const company = await companyModel.getInfCompanyByID(companyId);
+  if (!company) {
+    const err = new Error('Entreprise introuvable');
+    err.status = 404; throw err;
+  }
+
+  return company;
+};
+
+
+
 // Récupère les informations de l'entreprise par ID utilisateur
 exports.getCompanyById = async (userId) => {
   if (!userId) {

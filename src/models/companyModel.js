@@ -1,5 +1,13 @@
 const pool = require('../config/dbConfig');
 
+
+//Get Company by company ID
+exports.getInfCompanyByID = async (id) => {
+  const query = `SELECT * FROM companies WHERE company_id = $1`;
+  const result = await pool.query(query, [id]);
+  return result.rows[0];
+}
+
 // Get company by user ID
 exports.getById = async (id) => {
   const query = `SELECT c.id, c.name, c.description, c.website, c.created_at, u.address, u.phone, u.email

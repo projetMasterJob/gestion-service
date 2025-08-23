@@ -1,5 +1,18 @@
 const companyService = require('../services/companyService');
 
+// Récupère les informations de l'entreprise par ID company
+exports.getINFCompanyById = async (req, res) => {
+  const { company_id } = req.params;
+  try {
+    const data = await companyService.getINFCompanyById(company_id);
+    return res.status(200).json(data);
+  } catch (error) {
+    // Si le service a posé error.status, on l'utilise. Sinon 500 (comme ton style "register").
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
+  }
+};
+
 // Récupère les informations de l'entreprise par ID utilisateur
 exports.getCompanyById = async (req, res) => {
   const { user_id } = req.params;

@@ -3,6 +3,10 @@ const router = express.Router();
 const companyController = require('../controllers/companyController');
 const middleware = require('../middleware/authMiddleware');
 
+
+// Route pour obtenir les informations de l'entreprise par ID utilisateur
+router.get('/inf/:company_id', companyController.getINFCompanyById);
+
 // Route pour obtenir les informations de l'entreprise par ID utilisateur
 router.get('/:user_id', companyController.getCompanyById);
 
@@ -17,5 +21,7 @@ router.post('/job', middleware.authenticateToken, companyController.createJob);
 
 // Route pour mettre à jour une candidature
 router.put('/application/:id', middleware.authenticateToken, companyController.updateApplication);
+
+
 
 module.exports = router;

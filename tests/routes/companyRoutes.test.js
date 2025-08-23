@@ -4,6 +4,7 @@ const express = require('express');
 
 // On mocke le controller ET le middleware
 jest.mock('../../src/controllers/companyController', () => ({
+  getINFCompanyById: jest.fn((req, res) => res.status(200).json({ ok: true, route: 'getINFCompanyById', params: req.params })),
   getCompanyById: jest.fn((req, res) => res.status(200).json({ ok: true, route: 'getCompanyById', params: req.params })),
   getJobsByUserId: jest.fn((req, res) => res.status(200).json({ ok: true, route: 'getJobsByUserId', params: req.params })),
   getApplicationsByUserId: jest.fn((req, res) => res.status(200).json({ ok: true, route: 'getApplicationsByUserId', params: req.params })),
@@ -32,6 +33,16 @@ describe('Company routes', () => {
     callOrder.length = 0;
     jest.clearAllMocks();
   });
+
+  test('GET /inf/:company_id appelle companyController.getINFCompanyById', async () => {
+    const res = await request(app).get('/inf/c-999');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true, route: 'getINFCompanyById', params: { company_id: 'c-999' } });
+    expect(companyController.getINFCompanyById).toHaveBeenCalledTimes(1);
+    const [req] = companyController.getINFCompanyById.mock.calls[0];
+    expect(req.params.company_id).toBe('c-999');
+  });
+  
 
   test('GET /:user_id appelle companyController.getCompanyById', async () => {
     const res = await request(app).get('/123');
