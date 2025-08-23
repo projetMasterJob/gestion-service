@@ -216,4 +216,63 @@ describe('CompanyController', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Candidature introuvable' });
     });
   });
+
+  describe('CompanyController (branches manquantes)', () => {
+		beforeEach(() => {
+			jest.clearAllMocks();
+		});
+
+		// ---- getJobsByUserId ----
+		it('getJobsByUserId → 404 quand le service rejette avec error.status', async () => {
+			const req = { params: { user_id: '42' } };
+			const res = mockRes();
+			const err = new Error('Offres introuvables');
+			err.status = 404;
+			companyService.getJobsByUserId.mockRejectedValueOnce(err);
+
+			await companyController.getJobsByUserId(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(404);
+			expect(res.json).toHaveBeenCalledWith({ message: 'Offres introuvables' });
+		});
+
+		it('getJobsByUserId → 500 quand le service rejette sans message ni status', async () => {
+			const req = { params: { user_id: '42' } };
+			const res = mockRes();
+			const err = new Error();
+			err.message = ''; // force le chemin 500
+			companyService.getJobsByUserId.mockRejectedValueOnce(err);
+
+			await companyController.getJobsByUserId(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.json).toHaveBeenCalledWith({ message: 'Internal server error' });
+		});
+
+		// ---- getApplicationsByUserId ----
+		it('getApplicationsByUserId → 400 quand le service rejette sans status mais avec message', async () => {
+			const req = { params: { user_id: '' } };
+			const res = mockRes();
+			const err = new Error('"user_id" est requis');
+			companyService.getApplicationsByUserId.mockRejectedValueOnce(err);
+
+			await companyController.getApplicationsByUserId(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(400);
+			expect(res.json).toHaveBeenCalledWith({ message: '"user_id" est requis' });
+		});
+
+		it('getApplicationsByUserId → 500 quand le service rejette sans message ni status', async () => {
+			const req = { params: { user_id: '7' } };
+			const res = mockRes();
+			const err = new Error();
+			err.message = '';
+			companyService.getApplicationsByUserId.mockRejectedValueOnce(err);
+
+			await companyController.getApplicationsByUserId(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.json).toHaveBeenCalledWith({ message: 'Internal server error' });
+		});
+	});
 });
