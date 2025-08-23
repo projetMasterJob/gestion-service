@@ -10,4 +10,6 @@ router.get('/users/:id', authenticateToken, authorizeUser, UserController.getUse
 router.put('/users/:id', authenticateToken, authorizeUser, UserController.updateUser);
 router.delete('/users/:id', authenticateToken, authorizeUser, UserController.deleteUser);
 
+router.post('/users/application', authenticateToken, UserController.createApplication);
+
 module.exports = router;

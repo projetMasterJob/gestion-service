@@ -99,6 +99,26 @@ class UserModel {
       throw error;
     }
   }
+
+  static async createApplication(applicationData) {
+    const query = `
+      INSERT INTO applications (user_id, job_id, applied_at)
+      VALUES ($1, $2, NOW())
+      RETURNING id, job_id, user_id, status, applied_at
+    `;
+
+    const values = [
+      applicationData.user_id,
+      applicationData.job_id
+    ];
+
+    try {
+      const result = await db.query(query, values);
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = UserModel; 
