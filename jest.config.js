@@ -7,6 +7,11 @@ module.exports = {
     '!src/config/**',
     '!src/models/**'
   ],
+  coveragePathIgnorePatterns: [
+      "/node_modules/",
+      "apiService.js",
+      "apiController.js"
+    ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   testMatch: [

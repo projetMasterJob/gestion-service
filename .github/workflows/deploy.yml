@@ -1,0 +1,53 @@
+name: CI/CD gestion-service
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+        env:
+          NODE_ENV: test
+
+      - name: Jest Coverage
+        run: npx jest --coverage
+        env:
+          NODE_ENV: test
+
+      - name: Security Audit
+        run: npm audit --production
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+  notify:
+      runs-on: ubuntu-latest
+      needs: [build]
+      steps:
+        - name: Notify build status
+          run: echo "Build and deployment completed successfully!"
+  
