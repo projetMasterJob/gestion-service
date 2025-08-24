@@ -43,7 +43,33 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+  deploy:
+      name: Deploy to Vercel (Production)
+      runs-on: ubuntu-latest
+      needs: [build]
+      if: github.ref == 'refs/heads/main'
 
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Use Node.js 18
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - name: Vercel Pull (project & env)
+          run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_DEPLOY_ALEX }}
+          env:
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_ALEX }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ALEX }}
+
+        - name: Vercel Build (prebuild)
+          run: npx vercel build --prod --token=${{ secrets.VERCEL_DEPLOY_ALEX }}
+
+        - name: Vercel Deploy (use prebuilt)
+          run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_DEPLOY_ALEX }}
+          
   notify:
       runs-on: ubuntu-latest
       needs: [build]
