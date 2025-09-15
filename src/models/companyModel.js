@@ -64,14 +64,15 @@ exports.getApplicationsByUserId = async (userId) => {
 
 // Create a new job
 exports.createJob = async (jobData) => {
-  const query = `INSERT INTO jobs (title, description, salary, job_type, posted_at, company_id)
-  VALUES ($1, $2, $3, $4, NOW(), $5) RETURNING *`;
+  const query = `INSERT INTO jobs (title, description, salary, job_type, posted_at, company_id, image_url)
+  VALUES ($1, $2, $3, $4, NOW(), $5, $6) RETURNING *`;
   const values = [
     jobData.title,
     jobData.description,
     jobData.salary,
     jobData.job_type,
-    jobData.company_id
+    jobData.company_id,
+    jobData.image_url || null
   ];
   const result = await pool.query(query, values);
   return result.rows[0];
