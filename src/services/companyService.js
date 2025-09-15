@@ -1,4 +1,5 @@
 const companyModel = require('../models/companyModel');
+const locationService = require('./locationService');
 
 // Récupère les informations de l'entreprise par ID company
 exports.getINFCompanyById = async (companyId) => {
@@ -89,6 +90,26 @@ exports.createJob = async (jobData) => {
     err.status = 500; throw err;
   }
 
+  // Créer une location si les données de localisation sont fournies
+  if (jobData.latitude && jobData.longitude && jobData.address) {
+    try {
+      const locationData = {
+        entity_type: 'job',
+        entity_id: newJob.id,
+        latitude: jobData.latitude,
+        longitude: jobData.longitude,
+        address: jobData.address,
+        cp: jobData.postal_code || null
+      };
+      
+      const location = await locationService.createLocation(locationData);
+      console.log('Location created for job:', location.id);
+    } catch (locationError) {
+      console.error('Error creating location:', locationError);
+      // Ne pas faire échouer la création du job si la location échoue
+    }
+  }
+
   return newJob;
 };
 
@@ -135,6 +156,20 @@ exports.getJobById = async (jobId) => {
     err.status = 404; throw err;
   }
 
+  // Récupérer la location associée
+  try {
+    const location = await locationService.getLocationByEntity('job', jobId);
+    if (location) {
+      job.latitude = location.latitude;
+      job.longitude = location.longitude;
+      job.address = location.address;
+      job.postal_code = location.cp;
+    }
+  } catch (locationError) {
+    console.error('Error fetching location:', locationError);
+    // Ne pas faire échouer la récupération du job si la location échoue
+  }
+
   return job;
 };
 
@@ -149,10 +184,48 @@ exports.updateJob = async (jobId, jobData) => {
     err.status = 400; throw err;
   }
 
-  const updated = await companyModel.updateJob(jobId, jobData);
+  // Séparer les données de job des données de location
+  const { latitude, longitude, address, postal_code, ...jobOnlyData } = jobData;
+
+  const updated = await companyModel.updateJob(jobId, jobOnlyData);
   if (!updated) {
     const err = new Error('Offre d\'emploi introuvable');
     err.status = 404; throw err;
+  }
+
+  // Mettre à jour la location si les données de localisation sont fournies
+  if (latitude && longitude && address) {
+    try {
+      // Vérifier si une location existe déjà
+      const existingLocation = await locationService.getLocationByEntity('job', jobId);
+      
+      if (existingLocation) {
+        // Mettre à jour la location existante
+        const locationData = {
+          latitude: latitude,
+          longitude: longitude,
+          address: address,
+          cp: postal_code || null
+        };
+        await locationService.updateLocation(existingLocation.id, locationData);
+        console.log('Location updated for job:', jobId);
+      } else {
+        // Créer une nouvelle location
+        const locationData = {
+          entity_type: 'job',
+          entity_id: jobId,
+          latitude: latitude,
+          longitude: longitude,
+          address: address,
+          cp: postal_code || null
+        };
+        await locationService.createLocation(locationData);
+        console.log('Location created for job:', jobId);
+      }
+    } catch (locationError) {
+      console.error('Error updating location:', locationError);
+      // Ne pas faire échouer la mise à jour du job si la location échoue
+    }
   }
 
   return updated;
@@ -169,6 +242,15 @@ exports.deleteJob = async (jobId) => {
   if (!deleted) {
     const err = new Error('Offre d\'emploi introuvable');
     err.status = 404; throw err;
+  }
+
+  // Supprimer la location associée
+  try {
+    await locationService.deleteLocationByEntity('job', jobId);
+    console.log('Location deleted for job:', jobId);
+  } catch (locationError) {
+    console.error('Error deleting location:', locationError);
+    // Ne pas faire échouer la suppression du job si la location échoue
   }
 
   return deleted;
