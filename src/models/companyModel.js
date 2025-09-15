@@ -91,3 +91,43 @@ exports.updateApplication = async (applicationId, updatedData) => {
   const result = await pool.query(query, values);
   return result.rows[0];
 };
+
+// Récupération d'une offre d'emploi par ID
+exports.getJobById = async (jobId) => {
+  const query = `SELECT * FROM jobs WHERE id = $1`;
+  const result = await pool.query(query, [jobId]);
+  return result.rows[0];
+};
+
+// Mise à jour d'une offre d'emploi
+exports.updateJob = async (jobId, jobData) => {
+  const fields = [];
+  const values = [];
+  let paramCount = 1;
+
+  // Construire dynamiquement la requête UPDATE
+  Object.keys(jobData).forEach(key => {
+    if (jobData[key] !== undefined && jobData[key] !== null) {
+      fields.push(`${key} = $${paramCount}`);
+      values.push(jobData[key]);
+      paramCount++;
+    }
+  });
+
+  if (fields.length === 0) {
+    throw new Error('Aucune donnée à mettre à jour');
+  }
+
+  values.push(jobId); // ID en dernier paramètre
+  const query = `UPDATE jobs SET ${fields.join(', ')}, updated_at = NOW() WHERE id = $${paramCount} RETURNING *`;
+  
+  const result = await pool.query(query, values);
+  return result.rows[0];
+};
+
+// Suppression d'une offre d'emploi
+exports.deleteJob = async (jobId) => {
+  const query = `DELETE FROM jobs WHERE id = $1 RETURNING *`;
+  const result = await pool.query(query, [jobId]);
+  return result.rows[0];
+};

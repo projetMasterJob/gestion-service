@@ -74,3 +74,40 @@ exports.updateApplication = async (req, res) => {
     return res.status(status).json({ message: error.message || 'Internal server error' });
   }
 };
+
+// Récupération d'une offre d'emploi par ID
+exports.getJobById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const job = await companyService.getJobById(id);
+    return res.status(200).json(job);
+  } catch (error) {
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
+  }
+};
+
+// Mise à jour d'une offre d'emploi
+exports.updateJob = async (req, res) => {
+  const { id } = req.params;
+  const jobData = req.body;
+  try {
+    const job = await companyService.updateJob(id, jobData);
+    return res.status(200).json({ message: 'Job updated successfully', job });
+  } catch (error) {
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
+  }
+};
+
+// Suppression d'une offre d'emploi
+exports.deleteJob = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const job = await companyService.deleteJob(id);
+    return res.status(200).json({ message: 'Job deleted successfully', job });
+  } catch (error) {
+    const status = error.status || (error.message ? 400 : 500);
+    return res.status(status).json({ message: error.message || 'Internal server error' });
+  }
+};

@@ -121,3 +121,55 @@ exports.updateApplication = async (applicationId, updatedData) => {
 
   return updated;
 };
+
+// Récupération d'une offre d'emploi par ID
+exports.getJobById = async (jobId) => {
+  if (!jobId) {
+    const err = new Error('"jobId" est requis');
+    err.status = 400; throw err;
+  }
+
+  const job = await companyModel.getJobById(jobId);
+  if (!job) {
+    const err = new Error('Offre d\'emploi introuvable');
+    err.status = 404; throw err;
+  }
+
+  return job;
+};
+
+// Mise à jour d'une offre d'emploi
+exports.updateJob = async (jobId, jobData) => {
+  if (!jobId) {
+    const err = new Error('"jobId" est requis');
+    err.status = 400; throw err;
+  }
+  if (!jobData || typeof jobData !== 'object') {
+    const err = new Error('Données d\'offre invalides');
+    err.status = 400; throw err;
+  }
+
+  const updated = await companyModel.updateJob(jobId, jobData);
+  if (!updated) {
+    const err = new Error('Offre d\'emploi introuvable');
+    err.status = 404; throw err;
+  }
+
+  return updated;
+};
+
+// Suppression d'une offre d'emploi
+exports.deleteJob = async (jobId) => {
+  if (!jobId) {
+    const err = new Error('"jobId" est requis');
+    err.status = 400; throw err;
+  }
+
+  const deleted = await companyModel.deleteJob(jobId);
+  if (!deleted) {
+    const err = new Error('Offre d\'emploi introuvable');
+    err.status = 404; throw err;
+  }
+
+  return deleted;
+};
