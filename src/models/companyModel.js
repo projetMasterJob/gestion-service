@@ -10,7 +10,7 @@ exports.getInfCompanyByID = async (id) => {
 
 // Get company by user ID
 exports.getById = async (id) => {
-  const query = `SELECT c.id, c.name, c.description, c.website, c.created_at, u.address, u.phone, u.email
+  const query = `SELECT c.id, c.name, c.description, c.website, c.created_at, c.image_url, u.address, u.phone, u.email
   FROM users u INNER JOIN companies c ON c.user_id = u.id WHERE u.id = $1`;
   const result = await pool.query(query, [id]);
   return result.rows[0];
